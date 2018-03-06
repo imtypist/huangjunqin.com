@@ -14,8 +14,4 @@ The dogma of signal processing maintains that a signal must be sampled at a rate
 
 As the compressive sensing research community continues to expand rapidly, it behooves us [to heed Shannon's advice](http://arquivo.pt/noFrame/replay/20160516193220/https://dsp.rice.edu/sites/dsp.rice.edu/files/shannon-bandwagon.pdf).
 
-Compressive sensing is also referred to in the literature by the terms: compressed sensing, compressive sampling, and sketching/heavy-hitters.
-
-<!-- more -->
-
-<iframe style="background-color: #fff;height:600px;width: 100%;" src="http://arquivo.pt/noFrame/replay/20160516193220/http://dsp.rice.edu/cs" seamless="seamless" frameborder="0" scrolling="yes"></iframe>
+Compressive sensing is also referred to in the literature by the terms: compressed sensing, compressive sampling, and sketching/heavy-hitters. [->完整内容](http://arquivo.pt/noFrame/replay/20160516193220/http://dsp.rice.edu/cs)
