@@ -1,7 +1,7 @@
-----
+---
 title: 译文 | MPI newbie：What is “operating system bypass”?
 date: 2017-07-23 23:09:00
-----
+---
 
 原文链接：[MPI newbie: What is “operating system bypass”?](http://blogs.cisco.com/performance/mpi-newbie-what-is-operating-system-bypass)
 顺便提一下标题那个有意思的词`newbie`，念成牛逼，实际上是新手的意思哈哈！`OS bypass`译为系统旁路。
