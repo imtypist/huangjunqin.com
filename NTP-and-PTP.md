@@ -1,8 +1,7 @@
-----
-
+---
 title: NTP与PTP：全网时钟同步协议
 date: 2017-07-15 20:46:25
-----
+---
 
 这周看到了SIGCOMM2016上的一篇论文[Globally Synchronized Time via Datacenter Networks](http://dl.acm.org/authorize?N19282)，文中提出了一个新型的DTP时钟同步机制，提高全网时钟同步的精确度。本文主要介绍下在abstract中提到了NTP和PTP两种现行的时钟同步协议。
 
