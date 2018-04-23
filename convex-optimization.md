@@ -1,10 +1,7 @@
-----
-
+---
 title: 转载 | 凸优化 convex optimization
-
 date: 2017-11-25 19:07:00
-
-----
+---
 
 **原文出自：[压缩感知中的数学知识：凸优化](http://blog.csdn.net/jbb0523/article/details/40742955)**，简单易懂。
 
