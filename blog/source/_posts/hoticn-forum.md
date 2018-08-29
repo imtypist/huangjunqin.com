@@ -1,9 +1,11 @@
 ---
 title: 【IEEE HotICN 2018】记录论坛及会议的key points
 date: 2018-08-16 00:56:33
+tags:
 ---
 
 **keyword**: NDN, blockchain, ICN
+
 **演讲主题列表**：[Program](https://2018.ndnlab.com/index.php?m=content&c=index&a=lists&catid=23)
 
 ### 区块链技术与应用论坛（2018.8.14）

@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+
+  
+  <title>译文 | MPI newbie：What is “operating system bypass”? | 黄俊钦</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="原文链接：MPI newbie: What is “operating system bypass”?顺便提一下标题那个有意思的词newbie，念成牛逼，实际上是新手的意思哈哈！OS bypass译为系统旁路。 转载请注明出处，正文开始 “OS bypass”这个术语经常会在MPI和HPC的对话中被提及，它通常被认为在许多MPI的应用中是“必备品”，因为它能提高应用的性能。但是，它到底是什么呢？如">
+<meta property="og:type" content="article">
+<meta property="og:title" content="译文 | MPI newbie：What is “operating system bypass”?">
+<meta property="og:url" content="http://blog.huangjunqin.com/2017/07/23/what-is-osbypass/index.html">
+<meta property="og:site_name" content="黄俊钦">
+<meta property="og:description" content="原文链接：MPI newbie: What is “operating system bypass”?顺便提一下标题那个有意思的词newbie，念成牛逼，实际上是新手的意思哈哈！OS bypass译为系统旁路。 转载请注明出处，正文开始 “OS bypass”这个术语经常会在MPI和HPC的对话中被提及，它通常被认为在许多MPI的应用中是“必备品”，因为它能提高应用的性能。但是，它到底是什么呢？如">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2018-08-29T12:18:25.891Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="译文 | MPI newbie：What is “operating system bypass”?">
+<meta name="twitter:description" content="原文链接：MPI newbie: What is “operating system bypass”?顺便提一下标题那个有意思的词newbie，念成牛逼，实际上是新手的意思哈哈！OS bypass译为系统旁路。 转载请注明出处，正文开始 “OS bypass”这个术语经常会在MPI和HPC的对话中被提及，它通常被认为在许多MPI的应用中是“必备品”，因为它能提高应用的性能。但是，它到底是什么呢？如">
+  
+    <link rel="alternate" href="/atom.xml" title="黄俊钦" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">黄俊钦</a>
+      </h1>
+      
+        <h2 id="subtitle-wrap">
+          <a href="/" id="subtitle">科研，在路上</a>
+        </h2>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+          <a class="main-nav-link" href="http://huangjunqin.com">About</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="搜索"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://blog.huangjunqin.com"></form>
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-what-is-osbypass" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2017/07/23/what-is-osbypass/" class="article-date">
+  <time datetime="2017-07-23T15:09:00.000Z" itemprop="datePublished">2017-07-23</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      译文 | MPI newbie：What is “operating system bypass”?
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>原文链接：<a href="http://blogs.cisco.com/performance/mpi-newbie-what-is-operating-system-bypass" target="_blank" rel="noopener">MPI newbie: What is “operating system bypass”?</a><br>顺便提一下标题那个有意思的词<code>newbie</code>，念成牛逼，实际上是新手的意思哈哈！<code>OS bypass</code>译为系统旁路。</p>
+<p><strong>转载请注明出处，正文开始</strong></p>
+<p>“OS bypass”这个术语经常会在MPI和HPC的对话中被提及，它通常被认为在许多MPI的应用中是“必备品”，因为它能提高应用的性能。<br>但是，它到底是什么呢？如果它对提高应用性能有帮助，那么为什么不所有应用都使用OS bypass呢？<br>通常访问网络硬件，比如访问Network Internet Cards[<a href="https://www.computerhope.com/jargon/n/nic.htm" target="_blank" rel="noopener">what is NICs</a>]的模式，就是先调用用户空间的API，例如TCP socket调用包括bind、connect、accept、read、write等，然后交给操作系统，由操作系统来调用懂得如何与当前电脑中的NIC硬件交互的设备驱动。<br>这种模式已经被很好的验证过了，而且几乎是所有应用程序（除了HPC）的工作方式。<br>那么HPC应用为什么不使用这种模式呢，至少有两大原因：</p>
+<ol>
+<li>这种模式需要进入到内核，横穿整个操作系统网络栈，最后停止在某个具体的设备驱动，这个过程实在是“太慢”了。这里说“慢”并不是真的慢，这种模式对于世界上99.99999%的应用来说都非常好了。但是对于短网络消息来说，它们需要超低延迟的HPC应用来看到这些操作花销的时间，并且认为，“我们可以阻止这一切”。</li>
+<li>虽然整个HPC生态系统的要求范围非常大，但许多HPC应用程序共享一些共同特征。例如：一个运行的HPC任务不需要与各种硬件交互，不需要通过WAN通信，它通常只与一小部分peers进行通信，等等诸如此类。总之，关于一个通常的HPC应用不需要做什么这个问题可以总结的太多了，因此在操作系统中的通用网络栈是不必要的。</li>
+</ol>
+<a id="more"></a>
+<p>换个角度来说：HPC应用的专业性避免执行那些通用网络的行为，从而允许使用更小，高度专业化的，并且非常高效的网络栈（这被限制在一组具体的假设上）。<br>这些软件栈存在于用户空间中间件库中（比如MPI），因此可以给HPC应用提供相当高的网络I/O性能。因为这些库可以直接与NIC硬件交互，所以它们可以高效地将迷你专用“设备驱动”带入用户空间。<br>作为用户空间“设备驱动程序”，这种库可以直接将网络流量注入到NIC硬件中。同样的，高性能的NIC通常可以将入站的MPI流量直接引导到目标MPI进程。这意味着，它们不需要通过软件调度来引导入站流量到目标MPI进程（那么做会更慢）。<br>对短消息来说，通过这种方式绕过操作系统的网络栈产生的延迟超低，这也是总体HPC应用高性能表现的关键因素所在。（注意：许多HPC应用需要频繁地交换短消息）。<br>需要注意的是，有得必有失，在获得高性能的同时，也有一个不可避免的损失，那就是灵活性。<br>例如，现行的MPI库都倾向于做一些假设，关于是否能充分利用CPU内核去调度网络硬件资源来检查进度。对于每个CPU内核只有一个进程的HPC应用来说是非常好的，<em>但是在这假设之外就非常可怕了，例如在大量超额认购的虚拟环境中</em>。</p>
+<p><strong>译者注：上一段emphasis部分不晓得原文啥意思，在这里提供下原文： <u>but would be horrible outside of those assumptions (e.g., in a heavily oversubscribed virtualized environment)</u></strong></p>
+<p>此外，线路协议的互操作水平一般都很低：例如在一个运行的MPI任务中的一个个体进程，通常认为他的所有peers都使用同一种线路协议。它甚至可能认为它的所有peers都使用同一供应商的NICs，可能甚至是相同的固件版本。<br>诸如此类的假设导致了性能关键代码路径的简化，有助于进一步降低短消息的延迟。<br>因为这些因素，系统旁路技术，代码路径简化和其他一些优化都通常一起出现，而且只适用于许多假设和限制的受控环境下。所以这就是为什么系统旁路技术只适用于HPC应用而根本不适用于通用的网络应用程序。<br>完。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://blog.huangjunqin.com/2017/07/23/what-is-osbypass/" data-id="cjlf45l42000f40v95qxv3f7l" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2017/08/01/during-my-junior/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          别了，大三
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2017/07/21/Congestion-Control-Algorithms/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">Introduction of Congestion Control Algorithms</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+
+  
+    
+
+  
+    
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">归档</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/08/">八月 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/07/">七月 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/04/">四月 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/03/">三月 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">十二月 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/11/">十一月 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">十月 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/08/">八月 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/07/">七月 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/06/">六月 2017</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">最新文章</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2018/08/16/hoticn-forum/">【IEEE HotICN 2018】记录论坛及会议的key points</a>
+          </li>
+        
+          <li>
+            <a href="/2018/07/02/手机定位原理/">手机定位原理</a>
+          </li>
+        
+          <li>
+            <a href="/2018/04/23/上交计算机保研/">2018上交计算机保研经验分享</a>
+          </li>
+        
+          <li>
+            <a href="/2018/04/18/how-to-download-ova-fast/">如何使用迅雷快速下载Genymotion镜像</a>
+          </li>
+        
+          <li>
+            <a href="/2018/03/20/Windows10-python27环境安装OSMnx踩坑记录/">Windows10+python27环境安装OSMnx踩坑记录</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2018 Junqin Huang<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+    <a href="http://huangjunqin.com" class="mobile-nav-link">About</a>
+  
+</nav>
+    
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+
+
+
+  </div>
+</body>
+</html>

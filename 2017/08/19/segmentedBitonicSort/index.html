@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+
+  
+  <title>分段双调排序算法 | 黄俊钦</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="双调排序是data-independent的排序， 即比较顺序与数据无关的排序方法， 特别适合做并行计算，例如用GPU、fpga来计算。 1、双调序列 双调序列是一个先单调递增后单调递减（或者先单调递减后单调递增）的序列。 2、Batcher定理 将任意一个长为2n的双调序列A分为等长的两半X和Y，将X中的元素与Y中的元素一一按原序比较，即a[i]与a[i+n] (i &amp;lt; n)比较，将较大者">
+<meta property="og:type" content="article">
+<meta property="og:title" content="分段双调排序算法">
+<meta property="og:url" content="http://blog.huangjunqin.com/2017/08/19/segmentedBitonicSort/index.html">
+<meta property="og:site_name" content="黄俊钦">
+<meta property="og:description" content="双调排序是data-independent的排序， 即比较顺序与数据无关的排序方法， 特别适合做并行计算，例如用GPU、fpga来计算。 1、双调序列 双调序列是一个先单调递增后单调递减（或者先单调递减后单调递增）的序列。 2、Batcher定理 将任意一个长为2n的双调序列A分为等长的两半X和Y，将X中的元素与Y中的元素一一按原序比较，即a[i]与a[i+n] (i &amp;lt; n)比较，将较大者">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="http://cdn.huangjunqin.com/1.png">
+<meta property="og:image" content="http://cdn.huangjunqin.com/2.png">
+<meta property="og:updated_time" content="2018-08-29T12:18:25.891Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="分段双调排序算法">
+<meta name="twitter:description" content="双调排序是data-independent的排序， 即比较顺序与数据无关的排序方法， 特别适合做并行计算，例如用GPU、fpga来计算。 1、双调序列 双调序列是一个先单调递增后单调递减（或者先单调递减后单调递增）的序列。 2、Batcher定理 将任意一个长为2n的双调序列A分为等长的两半X和Y，将X中的元素与Y中的元素一一按原序比较，即a[i]与a[i+n] (i &amp;lt; n)比较，将较大者">
+<meta name="twitter:image" content="http://cdn.huangjunqin.com/1.png">
+  
+    <link rel="alternate" href="/atom.xml" title="黄俊钦" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">黄俊钦</a>
+      </h1>
+      
+        <h2 id="subtitle-wrap">
+          <a href="/" id="subtitle">科研，在路上</a>
+        </h2>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+          <a class="main-nav-link" href="http://huangjunqin.com">About</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="搜索"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://blog.huangjunqin.com"></form>
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-segmentedBitonicSort" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2017/08/19/segmentedBitonicSort/" class="article-date">
+  <time datetime="2017-08-19T08:31:00.000Z" itemprop="datePublished">2017-08-19</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      分段双调排序算法
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>双调排序是data-independent的排序， 即比较顺序与数据无关的排序方法， 特别适合做并行计算，例如用GPU、fpga来计算。</p>
+<p><strong>1、双调序列</strong></p>
+<p>双调序列是一个先单调递增后单调递减（或者先单调递减后单调递增）的序列。</p>
+<p><strong>2、Batcher定理</strong></p>
+<p>将任意一个长为2n的双调序列A分为等长的两半X和Y，将X中的元素与Y中的元素一一按原序比较，即a[i]与a[i+n] (i &lt; n)比较，将较大者放入MAX序列，较小者放入MIN序列。则得到的MAX和MIN序列仍然是双调序列，并且MAX序列中的任意一个元素不小于MIN序列中的任意一个元素。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> (i=<span class="number">0</span>;i&lt;n;i++) &#123;</span><br><span class="line">    <span class="keyword">if</span> (get(i)&gt;get(i+n)) exchange(i,i+n);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><strong>3、双调排序</strong></p>
+<p>假设我们有一个双调序列，则我们根据Batcher定理，将该序列划分成2个双调序列，然后继续对每个双调序列递归划分，得到更短的双调序列，直到得到的子序列长度为1为止。这时的输出序列按单调递增顺序排列。类似于归并排序。</p>
+<p>见下图，升序排序，具体方法是，把一个序列(1…n)对半分，假设n=2^k，然后1和n/2+1比较，小的放上，接下来2和n/2+2比较，小的放上，以此类推；然后看成两个(n/2)长度的序列，因为他们都是双调序列，所以可以重复上面的过程；总共重复k轮，即最后一轮已经是长度是2的序列比较了，就可得到最终的排序结果。</p>
+<p><img src="http://cdn.huangjunqin.com/1.png" alt=""></p>
+<a id="more"></a>
+<p><strong>4、任意序列生成双调序列</strong></p>
+<p>这个过程叫Bitonic merge, 实际上也是divide and conquer的思路。 和前面sort的思路正相反， 是一个bottom up的过程——将两个相邻的，单调性相反的单调序列看作一个双调序列， 每次将这两个相邻的，单调性相反的单调序列merge生成一个新的双调序列， 然后排序（同第3点的双调排序）。 这样只要每次两个相邻长度为n的序列的单调性相反， 就可以通过连接得到一个长度为2n的双调序列，然后对这个2n的序列进行一次双调排序变成有序，然后在把两个相邻的2n序列合并（在排序的时候第一个升序，第二个降序）。 n开始为1， 每次翻倍，直到等于数组长度， 最后就只需要再一遍单方向（单调性）排序了。</p>
+<p>以16个元素的array为例：</p>
+<ol>
+<li>相邻两个元素合并形成8个单调性相反的单调序列</li>
+<li>两两序列合并，形成4个双调序列，分别按相反单调性排序</li>
+<li>4个长度为4的相反单调性单调序列，相邻两个合并，生成两个长度为8的双调序列，分别排序</li>
+<li>2个长度为8的相反单调性单调序列，相邻两个合并，生成1个长度为16的双调序列，排序</li>
+</ol>
+<p><img src="http://cdn.huangjunqin.com/2.png" alt=""></p>
+<p><strong>5、非2的幂次长度序列排序</strong></p>
+<p>这样的双调排序算法只能应付长度为2的幂的数组。那如何转化为能针对任意长度的数组呢？一个直观的方法就是使用padding。即使用一个定义的最大或者最小者来填充数组，让数组的大小填充到2的幂长度，再进行排序。最后过滤掉那些最大（最小）值即可。这种方式会使用到额外的空间，而且有时候padding的空间比较大（如数组长度为1025个元素，则需要填充到2048个，浪费了大量空间）。但是这种方法比较容易转化为针对GPU的并行算法。所以一般来说，并行计算中常使用双调排序来对一些较小的数组进行排序。 如果要考虑不用padding，用更复杂的处理方法，参考<a href="http://blog.csdn.net/ljiabin/article/details/8630627" target="_blank" rel="noopener">n!=2^k的双调排序网络</a>。</p>
+<p><strong>6、Bitonic Sort</strong> <em>双调排序参考代码<a href="http://www.tools-of-computing.com/tc/CS/Sorts/bitonic_sort.htm" target="_blank" rel="noopener">来源</a></em></p>
+<ul>
+<li>version Ⅰ（递归）</li>
+</ul>
+<p>使用sortup, sortdown, mergeup, mergedown四个函数来排序出不递减(non-decreasing)序列或者不递增(non-increasing)序列，最终递归合并成有序序列。</p>
+<p><code>void sortup(int m, int n)</code>将[m,m+n)区间内的n个元素按不递减顺序排列，然后使用<code>void mergeup(int m, int n)</code>将该区间的n个元素归并到整个不递减序列中。其余两个函数功能类似。</p>
+<p>所以在<code>main</code>函数中调用可以是<code>sortup(0, N)</code>，N是元素个数。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">sortup</span><span class="params">(<span class="keyword">int</span> m, <span class="keyword">int</span> n)</span> </span>&#123;<span class="comment">//from m to m+n</span></span><br><span class="line">    <span class="keyword">if</span> (n==<span class="number">1</span>) <span class="keyword">return</span>;</span><br><span class="line">    sortup(m,n/<span class="number">2</span>);</span><br><span class="line">    sortdown(m+n/<span class="number">2</span>,n/<span class="number">2</span>);</span><br><span class="line">    mergeup(m,n/<span class="number">2</span>);</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">sortdown</span><span class="params">(<span class="keyword">int</span> m, <span class="keyword">int</span> n)</span> </span>&#123;<span class="comment">//from m to m+n</span></span><br><span class="line">    <span class="keyword">if</span> (n==<span class="number">1</span>) <span class="keyword">return</span>;</span><br><span class="line">    sortup(m,n/<span class="number">2</span>);</span><br><span class="line">    sortdown(m+n/<span class="number">2</span>,n/<span class="number">2</span>);</span><br><span class="line">    mergedown(m,n/<span class="number">2</span>);</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">mergeup</span><span class="params">(<span class="keyword">int</span> m, <span class="keyword">int</span> n)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (n==<span class="number">0</span>) <span class="keyword">return</span>;</span><br><span class="line">    <span class="keyword">int</span> i;</span><br><span class="line">    <span class="keyword">for</span> (i=<span class="number">0</span>;i&lt;n;i++) &#123;</span><br><span class="line">        <span class="keyword">if</span> (get(m+i)&gt;get(m+i+n)) exchange(m+i,m+i+n);</span><br><span class="line">    &#125;</span><br><span class="line">    mergeup(m,n/<span class="number">2</span>);</span><br><span class="line">    mergeup(m+n,n/<span class="number">2</span>);</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">mergedown</span><span class="params">(<span class="keyword">int</span> m, <span class="keyword">int</span> n)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (n==<span class="number">0</span>) <span class="keyword">return</span>;</span><br><span class="line">    <span class="keyword">int</span> i;</span><br><span class="line">    <span class="keyword">for</span> (i=<span class="number">0</span>;i&lt;n;i++) &#123;</span><br><span class="line">        <span class="keyword">if</span> (get(m+i)&lt;get(m+i+n)) exchange(m+i,m+i+n);</span><br><span class="line">    &#125;</span><br><span class="line">    mergedown(m,n/<span class="number">2</span>);</span><br><span class="line">    mergedown(m+n,n/<span class="number">2</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>version Ⅱ（并行，非递归）</li>
+</ul>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">int</span> i,j,k;</span><br><span class="line"><span class="keyword">for</span> (k=<span class="number">2</span>;k&lt;=N;k=<span class="number">2</span>*k) &#123;</span><br><span class="line">  <span class="keyword">for</span> (j=k&gt;&gt;<span class="number">1</span>;j&gt;<span class="number">0</span>;j=j&gt;&gt;<span class="number">1</span>) &#123;</span><br><span class="line">    <span class="keyword">for</span> (i=<span class="number">0</span>;i&lt;N;i++) &#123;</span><br><span class="line">      <span class="keyword">int</span> ixj=i^j;</span><br><span class="line">      <span class="keyword">if</span> ((ixj)&gt;i) &#123;</span><br><span class="line">        <span class="keyword">if</span> ((i&amp;k)==<span class="number">0</span> &amp;&amp; get(i)&gt;get(ixj)) exchange(i,ixj);</span><br><span class="line">        <span class="keyword">if</span> ((i&amp;k)!=<span class="number">0</span> &amp;&amp; get(i)&lt;get(ixj)) exchange(i,ixj);</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><strong>7、分段双调排序实现</strong></p>
+<p><a href="https://github.com/imtypist/segmentedBitonicSort" target="_blank" rel="noopener">segmentedBitonicSort源码</a></p>
+<p><strong>8、参考文献</strong></p>
+<p><a href="http://www.cnblogs.com/tuding/p/7335853.html" target="_blank" rel="noopener">[1] 三十分钟理解：双调排序Bitonic Sort，适合并行计算的排序算法</a></p>
+<p><a href="http://www.tools-of-computing.com/tc/CS/Sorts/bitonic_sort.htm" target="_blank" rel="noopener">[2] Bitonic Sort</a></p>
+<p><a href="http://blog.csdn.net/u014226072/article/details/56840243" target="_blank" rel="noopener">[3] 分段双调排序实现</a></p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://blog.huangjunqin.com/2017/08/19/segmentedBitonicSort/" data-id="cjlf45l4z000h40v9weod4zud" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2017/08/26/music-163/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          网易云外链音乐
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2017/08/06/FMCW/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">调频连续波FMCW测距原理</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+
+  
+    
+
+  
+    
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">归档</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/08/">八月 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/07/">七月 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/04/">四月 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/03/">三月 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">十二月 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/11/">十一月 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">十月 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/08/">八月 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/07/">七月 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/06/">六月 2017</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">最新文章</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2018/08/16/hoticn-forum/">【IEEE HotICN 2018】记录论坛及会议的key points</a>
+          </li>
+        
+          <li>
+            <a href="/2018/07/02/手机定位原理/">手机定位原理</a>
+          </li>
+        
+          <li>
+            <a href="/2018/04/23/上交计算机保研/">2018上交计算机保研经验分享</a>
+          </li>
+        
+          <li>
+            <a href="/2018/04/18/how-to-download-ova-fast/">如何使用迅雷快速下载Genymotion镜像</a>
+          </li>
+        
+          <li>
+            <a href="/2018/03/20/Windows10-python27环境安装OSMnx踩坑记录/">Windows10+python27环境安装OSMnx踩坑记录</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2018 Junqin Huang<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+    <a href="http://huangjunqin.com" class="mobile-nav-link">About</a>
+  
+</nav>
+    
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+
+
+
+  </div>
+</body>
+</html>
