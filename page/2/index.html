@@ -68,6 +68,47 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-how-to-download-ova-fast" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2018/04/18/how-to-download-ova-fast/" class="article-date">
+  <time datetime="2018-04-18T10:32:39.000Z" itemprop="datePublished">2018-04-18</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2018/04/18/how-to-download-ova-fast/">如何使用迅雷快速下载Genymotion镜像</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>做安卓开发的同学一定知道Genymotion这一著名的安卓模拟器，可惜下载它的ova镜像实在是太太太太慢了！所以，在这里给大家分享一个用迅雷来下载镜像的好方法。</p>
+<p>以最新版的<code>2.12.0</code>为例，首先，我们可以发现，Genymotion下载的镜像会保存在<code>C:/Users/你的用户名/AppData/Local/Genymobile/Genymotion/ova</code>大概是这样子的路径下，你每次选择一个安卓镜像下载的时候都会在这个目录下创建一个临时文件，比如我下载一个安卓5.1.0的镜像，这个目录下的临时文件名字就是<code>genymotion_vbox86p_5.1_180219_000000.ova.partial</code>，可以看到是一个部分下载的文件。</p>
+<p>这个时候，我们先取消镜像的下载，然后复制上这个临时文件的名字（除了<code>.partial</code>）,加上一个前缀，还是以上面这个为例，那么完整的下载地址就是<code>http://files2.genymotion.com/dists/5.1.0/ova/genymotion_vbox86p_5.1_180219_000000.ova</code>，复制到迅雷中下载，速度非常快！</p>
+<p>大概可以发现规律，下载链接的组成：<code>http://files2.genymotion.com/dists/&lt;安卓版本号&gt;/ova/目录下临时文件的名字.ova</code>，下载完成后替换掉ova目录下的临时文件，然后<strong>再去Genymotion选择下载这个镜像</strong>，就会发现已经下载好啦，进入自动部署的阶段了，就可以用啦~</p>
+<p>然后关于Genymotion不能安装arm架构的应用，我们可以使用Genymotion-ARM-Translation进行转换，我这边有适用<code>4.x</code>，<code>5.0</code>，<code>5.1</code>的translation工具包，如果有需要的朋友可以通过github的邮件向我要一份~</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://blog.huangjunqin.com/2018/04/18/how-to-download-ova-fast/" data-id="cjn7h1hml000c8ov9puvvnd9q" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+  
     <article id="post-Windows10-python27环境安装OSMnx踩坑记录" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
     <a href="/2018/03/20/Windows10-python27环境安装OSMnx踩坑记录/" class="article-date">
@@ -107,7 +148,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://blog.huangjunqin.com/2018/03/20/Windows10-python27环境安装OSMnx踩坑记录/" data-id="cjn37epy0000528v9hr430g2x" class="article-share-link">Share</a>
+      <a data-url="https://blog.huangjunqin.com/2018/03/20/Windows10-python27环境安装OSMnx踩坑记录/" data-id="cjn7h1hkv00048ov9ny2v6cl1" class="article-share-link">Share</a>
       
       
     </footer>
@@ -150,7 +191,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://blog.huangjunqin.com/2017/12/04/Miller-cylindrical/" data-id="cjn37epxk000028v9jm4el9n6" class="article-share-link">Share</a>
+      <a data-url="https://blog.huangjunqin.com/2017/12/04/Miller-cylindrical/" data-id="cjn7h1hkv00028ov9fi4rllps" class="article-share-link">Share</a>
       
       
     </footer>
@@ -199,7 +240,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://blog.huangjunqin.com/2017/11/25/convex-optimization/" data-id="cjn37epyf000728v9vvn3ts6n" class="article-share-link">Share</a>
+      <a data-url="https://blog.huangjunqin.com/2017/11/25/convex-optimization/" data-id="cjn7h1hla00088ov9tnefjdk8" class="article-share-link">Share</a>
       
       
     </footer>
@@ -240,47 +281,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://blog.huangjunqin.com/2017/11/21/compressive-sensing-resources/" data-id="cjn37epy0000628v9zq11ysvp" class="article-share-link">Share</a>
-      
-      
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-fourier-series" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2017/10/01/fourier-series/" class="article-date">
-  <time datetime="2017-10-01T05:55:42.000Z" itemprop="datePublished">2017-10-01</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2017/10/01/fourier-series/">转载 | 如果看了此文你还不懂傅里叶变换，那就过来掐死我吧</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <blockquote>
-<p>你眼中看似落叶纷飞变化无常的世界，实际只是躺在上帝怀中一份早已谱好的乐章。</p>
-</blockquote>
-<p><a href="http://blog.jobbole.com/70549/" target="_blank" rel="noopener">&gt;&gt;文章传送门&lt;&lt;</a></p>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="https://blog.huangjunqin.com/2017/10/01/fourier-series/" data-id="cjn37epyf000928v92xbbk2wd" class="article-share-link">Share</a>
+      <a data-url="https://blog.huangjunqin.com/2017/11/21/compressive-sensing-resources/" data-id="cjn7h1hkv00068ov9gdydhaqs" class="article-share-link">Share</a>
       
       
     </footer>
@@ -326,6 +327,10 @@
       <ul>
         
           <li>
+            <a href="/2018/10/13/information-theory-basis/">『Information and coding theory』熵、相对熵、互信息都是些啥子哟，了解一哈</a>
+          </li>
+        
+          <li>
             <a href="/2018/10/10/iot-and-iota/">转载 | 物联网与『高效的』IOTA</a>
           </li>
         
@@ -339,10 +344,6 @@
         
           <li>
             <a href="/2018/04/23/上交计算机保研/">2018上交计算机保研经验分享</a>
-          </li>
-        
-          <li>
-            <a href="/2018/04/18/how-to-download-ova-fast/">如何使用迅雷快速下载Genymotion镜像</a>
           </li>
         
       </ul>

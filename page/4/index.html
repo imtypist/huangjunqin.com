@@ -68,6 +68,53 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-what-is-osbypass" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2017/07/23/what-is-osbypass/" class="article-date">
+  <time datetime="2017-07-23T15:09:00.000Z" itemprop="datePublished">2017-07-23</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2017/07/23/what-is-osbypass/">译文 | MPI newbie：What is “operating system bypass”?</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>原文链接：<a href="http://blogs.cisco.com/performance/mpi-newbie-what-is-operating-system-bypass" target="_blank" rel="noopener">MPI newbie: What is “operating system bypass”?</a><br>顺便提一下标题那个有意思的词<code>newbie</code>，念成牛逼，实际上是新手的意思哈哈！<code>OS bypass</code>译为系统旁路。</p>
+<p><strong>转载请注明出处，正文开始</strong></p>
+<p>“OS bypass”这个术语经常会在MPI和HPC的对话中被提及，它通常被认为在许多MPI的应用中是“必备品”，因为它能提高应用的性能。<br>但是，它到底是什么呢？如果它对提高应用性能有帮助，那么为什么不所有应用都使用OS bypass呢？<br>通常访问网络硬件，比如访问Network Internet Cards[<a href="https://www.computerhope.com/jargon/n/nic.htm" target="_blank" rel="noopener">what is NICs</a>]的模式，就是先调用用户空间的API，例如TCP socket调用包括bind、connect、accept、read、write等，然后交给操作系统，由操作系统来调用懂得如何与当前电脑中的NIC硬件交互的设备驱动。<br>这种模式已经被很好的验证过了，而且几乎是所有应用程序（除了HPC）的工作方式。<br>那么HPC应用为什么不使用这种模式呢，至少有两大原因：</p>
+<ol>
+<li>这种模式需要进入到内核，横穿整个操作系统网络栈，最后停止在某个具体的设备驱动，这个过程实在是“太慢”了。这里说“慢”并不是真的慢，这种模式对于世界上99.99999%的应用来说都非常好了。但是对于短网络消息来说，它们需要超低延迟的HPC应用来看到这些操作花销的时间，并且认为，“我们可以阻止这一切”。</li>
+<li>虽然整个HPC生态系统的要求范围非常大，但许多HPC应用程序共享一些共同特征。例如：一个运行的HPC任务不需要与各种硬件交互，不需要通过WAN通信，它通常只与一小部分peers进行通信，等等诸如此类。总之，关于一个通常的HPC应用不需要做什么这个问题可以总结的太多了，因此在操作系统中的通用网络栈是不必要的。</li>
+</ol>
+        
+          <p class="article-more-link">
+            <a href="/2017/07/23/what-is-osbypass/#more">Read More</a>
+          </p>
+        
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://blog.huangjunqin.com/2017/07/23/what-is-osbypass/" data-id="cjn7h1hn1000f8ov9kpc586n9" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+  
     <article id="post-Congestion-Control-Algorithms" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
     <a href="/2017/07/21/Congestion-Control-Algorithms/" class="article-date">
@@ -106,7 +153,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://blog.huangjunqin.com/2017/07/21/Congestion-Control-Algorithms/" data-id="cjn37epy0000228v9vr2uzpvh" class="article-share-link">Share</a>
+      <a data-url="https://blog.huangjunqin.com/2017/07/21/Congestion-Control-Algorithms/" data-id="cjn7h1hkf00008ov99aspz4lu" class="article-share-link">Share</a>
       
       
     </footer>
@@ -152,7 +199,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://blog.huangjunqin.com/2017/07/15/NTP-and-PTP/" data-id="cjn37epy0000328v9hlglbp5f" class="article-share-link">Share</a>
+      <a data-url="https://blog.huangjunqin.com/2017/07/15/NTP-and-PTP/" data-id="cjn7h1hkv00018ov9d06uyx1l" class="article-share-link">Share</a>
       
       
     </footer>
@@ -190,7 +237,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://blog.huangjunqin.com/2017/06/17/Semaphore/" data-id="cjn37epy0000428v9owefpwmk" class="article-share-link">Share</a>
+      <a data-url="https://blog.huangjunqin.com/2017/06/17/Semaphore/" data-id="cjn7h1hkv00038ov9b3hem0g8" class="article-share-link">Share</a>
       
       
     </footer>
@@ -236,7 +283,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://blog.huangjunqin.com/2017/06/13/fat12/" data-id="cjn37epyf000b28v9fnsxtrhf" class="article-share-link">Share</a>
+      <a data-url="https://blog.huangjunqin.com/2017/06/13/fat12/" data-id="cjn7h1hml000a8ov93nklkoyf" class="article-share-link">Share</a>
       
       
     </footer>
@@ -282,6 +329,10 @@
       <ul>
         
           <li>
+            <a href="/2018/10/13/information-theory-basis/">『Information and coding theory』熵、相对熵、互信息都是些啥子哟，了解一哈</a>
+          </li>
+        
+          <li>
             <a href="/2018/10/10/iot-and-iota/">转载 | 物联网与『高效的』IOTA</a>
           </li>
         
@@ -295,10 +346,6 @@
         
           <li>
             <a href="/2018/04/23/上交计算机保研/">2018上交计算机保研经验分享</a>
-          </li>
-        
-          <li>
-            <a href="/2018/04/18/how-to-download-ova-fast/">如何使用迅雷快速下载Genymotion镜像</a>
           </li>
         
       </ul>
