@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <title>『Information and coding theory』熵、相对熵、互信息都是些啥子哟，了解一哈 | 黄俊钦</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="一、熵① 什么是熵 可以看到，在概率不均匀的时候，熵是小于2^3, i.e. 3bit，采用了概率大的马匹编码短的原则，这和二元哈夫曼编码应该是一个道理。 ② 数学定义 可以注意到，Eg(X)其实就是熵，所以熵又解释为随机变量log 1&#x2F;p(X)的期望值。 ③ 性质123· H(X)≥0· H_b(X)&#x3D;(log_b a)H_a(X) 其实就是个换底公式· H(X)分布为凹函数，可以看">
+<meta property="og:type" content="article">
+<meta property="og:title" content="『Information and coding theory』熵、相对熵、互信息都是些啥子哟，了解一哈">
+<meta property="og:url" content="https://blog.huangjunqin.com/2018/10/13/information-theory-basis/index.html">
+<meta property="og:site_name" content="黄俊钦">
+<meta property="og:description" content="一、熵① 什么是熵 可以看到，在概率不均匀的时候，熵是小于2^3, i.e. 3bit，采用了概率大的马匹编码短的原则，这和二元哈夫曼编码应该是一个道理。 ② 数学定义 可以注意到，Eg(X)其实就是熵，所以熵又解释为随机变量log 1&#x2F;p(X)的期望值。 ③ 性质123· H(X)≥0· H_b(X)&#x3D;(log_b a)H_a(X) 其实就是个换底公式· H(X)分布为凹函数，可以看">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://cdn.huangjunqin.com/TIM%E6%88%AA%E5%9B%BE20181013191531.png">
+<meta property="og:image" content="http://cdn.huangjunqin.com/TIM%E6%88%AA%E5%9B%BE20181013162633.png">
+<meta property="og:image" content="http://cdn.huangjunqin.com/TIM%E6%88%AA%E5%9B%BE20181013172209.png">
+<meta property="og:image" content="http://cdn.huangjunqin.com/TIM%E6%88%AA%E5%9B%BE20181013184214.png">
+<meta property="og:image" content="http://cdn.huangjunqin.com/TIM%E6%88%AA%E5%9B%BE20181013185625.png">
+<meta property="og:image" content="http://cdn.huangjunqin.com/TIM%E6%88%AA%E5%9B%BE20181013195954.png">
+<meta property="og:image" content="http://cdn.huangjunqin.com/TIM%E6%88%AA%E5%9B%BE20181013201140.png">
+<meta property="og:image" content="http://cdn.huangjunqin.com/TIM%E6%88%AA%E5%9B%BE20181013171540.png">
+<meta property="og:image" content="http://cdn.huangjunqin.com/TIM%E6%88%AA%E5%9B%BE20181013201740.png">
+<meta property="og:image" content="http://cdn.huangjunqin.com/TIM%E6%88%AA%E5%9B%BE20181013201849.png">
+<meta property="og:image" content="http://cdn.huangjunqin.com/TIM%E6%88%AA%E5%9B%BE20181013163518.png">
+<meta property="og:image" content="http://cdn.huangjunqin.com/20161016215745500.png">
+<meta property="og:image" content="http://cdn.huangjunqin.com/TIM%E6%88%AA%E5%9B%BE20181013200445.png">
+<meta property="og:image" content="http://cdn.huangjunqin.com/TIM%E6%88%AA%E5%9B%BE20181013194416.png">
+<meta property="og:image" content="http://cdn.huangjunqin.com/TIM%E6%88%AA%E5%9B%BE20181013200815.png">
+<meta property="og:image" content="http://cdn.huangjunqin.com/TIM%E6%88%AA%E5%9B%BE20181013201149.png">
+<meta property="og:image" content="http://cdn.huangjunqin.com/TIM%E6%88%AA%E5%9B%BE20181013205425.png">
+<meta property="og:image" content="http://cdn.huangjunqin.com/TIM%E6%88%AA%E5%9B%BE20181013205439.png">
+<meta property="article:published_time" content="2018-10-13T13:21:09.000Z">
+<meta property="article:modified_time" content="2021-03-04T06:45:42.904Z">
+<meta property="article:author" content="Junqin Huang">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://cdn.huangjunqin.com/TIM%E6%88%AA%E5%9B%BE20181013191531.png">
+  
+    <link rel="alternate" href="/atom.xml" title="黄俊钦" type="application/atom+xml">
+  
+  
+    <link rel="shortcut icon" href="/favicon.png">
+  
+  
+    
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/typeface-source-code-pro@0.0.71/index.min.css">
+
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+
+  
+<meta name="generator" content="Hexo 5.4.0"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">黄俊钦</a>
+      </h1>
+      
+        <h2 id="subtitle-wrap">
+          <a href="/" id="subtitle">科研，在路上</a>
+        </h2>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS 订阅"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="搜索"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="搜索"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="https://blog.huangjunqin.com"></form>
+      </div>
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main"><article id="post-information-theory-basis" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2018/10/13/information-theory-basis/" class="article-date">
+  <time class="dt-published" datetime="2018-10-13T13:21:09.000Z" itemprop="datePublished">2018-10-13</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="p-name article-title" itemprop="headline name">
+      『Information and coding theory』熵、相对熵、互信息都是些啥子哟，了解一哈
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <p><img src="http://cdn.huangjunqin.com/TIM%E6%88%AA%E5%9B%BE20181013191531.png"></p>
+<h2 id="一、熵"><a href="#一、熵" class="headerlink" title="一、熵"></a>一、熵</h2><h4 id="①-什么是熵"><a href="#①-什么是熵" class="headerlink" title="① 什么是熵"></a>① 什么是熵</h4><p><img src="http://cdn.huangjunqin.com/TIM%E6%88%AA%E5%9B%BE20181013162633.png" alt="熵"></p>
+<p>可以看到，在概率不均匀的时候，熵是小于<code>2^3, i.e. 3bit</code>，采用了概率大的马匹编码短的原则，这和二元哈夫曼编码应该是一个道理。</p>
+<h4 id="②-数学定义"><a href="#②-数学定义" class="headerlink" title="② 数学定义"></a>② 数学定义</h4><p><img src="http://cdn.huangjunqin.com/TIM%E6%88%AA%E5%9B%BE20181013172209.png" alt="熵定义"></p>
+<p>可以注意到，<code>Eg(X)</code>其实就是熵，所以熵又解释为随机变量<code>log 1/p(X)</code>的期望值。</p>
+<h4 id="③-性质"><a href="#③-性质" class="headerlink" title="③ 性质"></a>③ 性质</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">· H(X)≥0</span><br><span class="line">· H_b(X)&#x3D;(log_b a)H_a(X) 其实就是个换底公式</span><br><span class="line">· H(X)分布为凹函数，可以看下图所示</span><br></pre></td></tr></table></figure>
+
+<p><img src="http://cdn.huangjunqin.com/TIM%E6%88%AA%E5%9B%BE20181013184214.png" alt="H(X)与P(X)关系图"></p>
+<p>另外可以从上图看到，当<code>p=1/2</code>时<code>H(p)</code>取得最大值，1比特，当<code>p=0,1</code>的时候<code>H(p)=0</code>，因为变量这时不再是随机的，所以不具有不确定度。</p>
+<span id="more"></span>
+
+<h4 id="④-联合熵和条件熵"><a href="#④-联合熵和条件熵" class="headerlink" title="④ 联合熵和条件熵"></a>④ 联合熵和条件熵</h4><p><img src="http://cdn.huangjunqin.com/TIM%E6%88%AA%E5%9B%BE20181013185625.png" alt="联合熵和条件熵"></p>
+<p>公式2-20两边同时取数学期望E即得定理2-14，但其实用下面的韦恩图记更加方便。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">· 推论： H(X,Y|Z)&#x3D;H(X|Z)+H(Y|X,Z)</span><br><span class="line">记忆方法： 如果把Z去掉的话其实就和公式2-14一样了，证明思路与2-14一致，感觉很多证明只要从定义出发就可以证得，所以定义一定要牢记</span><br><span class="line">· H(X|Y)&#x3D;Σ_&#123;y∈Y&#125;p(y)H(X|Y&#x3D;y) 在题目提供联合分布和边际分布的时候用这个公式计算，其实也就是定义2-10</span><br></pre></td></tr></table></figure>
+
+<h4 id="⑤-熵的链式法则"><a href="#⑤-熵的链式法则" class="headerlink" title="⑤ 熵的链式法则"></a>⑤ 熵的链式法则</h4><p><img src="http://cdn.huangjunqin.com/TIM%E6%88%AA%E5%9B%BE20181013195954.png" alt="熵的链式法则1"></p>
+<p><img src="http://cdn.huangjunqin.com/TIM%E6%88%AA%E5%9B%BE20181013201140.png" alt="熵的链式法则2"></p>
+<h2 id="二、相对熵"><a href="#二、相对熵" class="headerlink" title="二、相对熵"></a>二、相对熵</h2><h4 id="①-定义"><a href="#①-定义" class="headerlink" title="① 定义"></a>① 定义</h4><p><img src="http://cdn.huangjunqin.com/TIM%E6%88%AA%E5%9B%BE20181013171540.png" alt="相对熵"></p>
+<p>注意，因为<strong>相对熵并不对称</strong>，也就是说<code>D(p||q)≠D(q||p)</code>，同时注意<strong>熵也不对称</strong>！</p>
+<h4 id="②-条件相对熵"><a href="#②-条件相对熵" class="headerlink" title="② 条件相对熵"></a>② 条件相对熵</h4><p><img src="http://cdn.huangjunqin.com/TIM%E6%88%AA%E5%9B%BE20181013201740.png" alt="条件相对熵"></p>
+<h4 id="③-相对熵的链式法则"><a href="#③-相对熵的链式法则" class="headerlink" title="③ 相对熵的链式法则"></a>③ 相对熵的链式法则</h4><p><img src="http://cdn.huangjunqin.com/TIM%E6%88%AA%E5%9B%BE20181013201849.png" alt="相对熵的链式法则"></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">记忆方法： 可以根据贝叶斯概率公式来记，骆源老师说所有信息论适用的公式全部都是由概率论公式推到得来的，所以大部分都很相似。</span><br></pre></td></tr></table></figure>
+
+<p><u>Note: 2-70没看明白，为什么第一部分是<code>p(x,y)</code>也可以变成<code>D(p(x)||q(x))</code>，这个需要再看看。</u></p>
+<h2 id="三、互信息"><a href="#三、互信息" class="headerlink" title="三、互信息"></a>三、互信息</h2><h4 id="①-定义-1"><a href="#①-定义-1" class="headerlink" title="① 定义"></a>① 定义</h4><p><img src="http://cdn.huangjunqin.com/TIM%E6%88%AA%E5%9B%BE20181013163518.png" alt="互信息"></p>
+<p>我们不难发现，互信息其实就是一个某种形式的相对熵：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">I(X;Y)&#x3D;D(p(x,y)||p(x)p(y))</span><br></pre></td></tr></table></figure>
+
+<p>当<code>X⊥Y</code>时，<code>H(X|Y)=H(X)</code>，条件熵和条件概率是一个道理的。用韦恩图来表示<code>I(X;Y)</code>就如第③小节中，图《熵与互信息之间的关系》所示，可以看到，<code>I(X;Y)</code>即中间重叠的部分。那么，这个互信息有什么用呢，举个例子：*通信信道的系统输出信号概率依赖于输入信号，由此可以通过互信息就可以表示它的信道容量<code>C</code>*。下图是一个二元对称信道，具体内容可以参考[1]，大概领会一下精髓 :)。</p>
+<p><img src="http://cdn.huangjunqin.com/20161016215745500.png" alt="二元对称信道"></p>
+<h4 id="②-条件互信息"><a href="#②-条件互信息" class="headerlink" title="② 条件互信息"></a>② 条件互信息</h4><p><img src="http://cdn.huangjunqin.com/TIM%E6%88%AA%E5%9B%BE20181013200445.png" alt="条件互信息"></p>
+<p>它是在给定Z时由于Y的知识而引起关于X的不确定度的缩减量。</p>
+<h4 id="③-熵与互信息的关系"><a href="#③-熵与互信息的关系" class="headerlink" title="③ 熵与互信息的关系"></a>③ 熵与互信息的关系</h4><p><img src="http://cdn.huangjunqin.com/TIM%E6%88%AA%E5%9B%BE20181013194416.png" alt="熵与互信息的关系"></p>
+<p>这些性质用韦恩图理解的话就很简单了。</p>
+<blockquote>
+<p>很多信息论巨复杂的公式其实是“看”出来的，而不是证出来的 —— 骆源老师说的23333</p>
+</blockquote>
+<h4 id="④-互信息的链式法则"><a href="#④-互信息的链式法则" class="headerlink" title="④ 互信息的链式法则"></a>④ 互信息的链式法则</h4><p><img src="http://cdn.huangjunqin.com/TIM%E6%88%AA%E5%9B%BE20181013200815.png" alt="互信息的链式法则1"></p>
+<p><img src="http://cdn.huangjunqin.com/TIM%E6%88%AA%E5%9B%BE20181013201149.png" alt="互信息的链式法则2"></p>
+<p>其实对于条件熵也好，条件互信息也好，他们的条件链式法则去掉条件之后公式其实和不带条件的一样，所以记住一个就记住了两个。</p>
+<h2 id="要点总结"><a href="#要点总结" class="headerlink" title="要点总结"></a>要点总结</h2><p><img src="http://cdn.huangjunqin.com/TIM%E6%88%AA%E5%9B%BE20181013205425.png" alt="1"></p>
+<p><img src="http://cdn.huangjunqin.com/TIM%E6%88%AA%E5%9B%BE20181013205439.png" alt="2"></p>
+<h2 id="Reference"><a href="#Reference" class="headerlink" title="Reference"></a>Reference</h2><p>[1] Book. <em>Elements of Information Theory (second edition)</em></p>
+<p>[2] Slides. <em><a target="_blank" rel="noopener" href="http://home.ustc.edu.cn/~lzhq28/">http://home.ustc.edu.cn/~lzhq28/</a></em></p>
+<p>[3] Slides. <em>Course: 信息论与编码. Prof. Luo</em></p>
+<blockquote>
+<p><strong>辛苦整理，转载请注明出处，下次可能会写写Markov Chain相关的内容</strong></p>
+</blockquote>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://blog.huangjunqin.com/2018/10/13/information-theory-basis/" data-id="cklulry47000f74vjc1zr2kw9" data-title="『Information and coding theory』熵、相对熵、互信息都是些啥子哟，了解一哈" class="article-share-link">分享</a>
+      
+      
+      
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2019/01/01/2018review/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">前一篇</strong>
+      <div class="article-nav-title">
+        
+          我的2018
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2018/10/10/iot-and-iota/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">后一篇</strong>
+      <div class="article-nav-title">转载 | 物联网与『高效的』IOTA</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+
+  
+    
+
+  
+    
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">归档</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/03/">三月 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/01/">一月 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/10/">十月 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/08/">八月 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/07/">七月 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/04/">四月 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/03/">三月 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">十二月 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/11/">十一月 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">十月 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/08/">八月 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/07/">七月 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/06/">六月 2017</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">最新文章</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2021/03/04/%E5%8C%BA%E5%9D%97%E9%93%BE%E5%85%B1%E8%AF%86%E6%9C%BA%E5%88%B6%E7%BB%BC%E8%BF%B0/">区块链共识机制综述</a>
+          </li>
+        
+          <li>
+            <a href="/2019/01/01/2018review/">我的2018</a>
+          </li>
+        
+          <li>
+            <a href="/2018/10/13/information-theory-basis/">『Information and coding theory』熵、相对熵、互信息都是些啥子哟，了解一哈</a>
+          </li>
+        
+          <li>
+            <a href="/2018/10/10/iot-and-iota/">转载 | 物联网与『高效的』IOTA</a>
+          </li>
+        
+          <li>
+            <a href="/2018/08/16/hoticn-forum/">【IEEE HotICN 2018】记录论坛及会议的key points</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      
+      &copy; 2021 Junqin Huang<br>
+      Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+
+<script src="/js/jquery-3.4.1.min.js"></script>
+
+
+
+  
+<script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+
+
+  </div>
+</body>
+</html>

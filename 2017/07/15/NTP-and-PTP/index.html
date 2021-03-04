@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <title>NTP与PTP：全网时钟同步协议 | 黄俊钦</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="这周看到了SIGCOMM2016上的一篇论文Globally Synchronized Time via Datacenter Networks，文中提出了一个新型的DTP时钟同步机制，提高全网时钟同步的精确度。本文主要介绍下在abstract中提到了NTP和PTP两种现行的时钟同步协议。 同步的概念在现代通信网络中，大多数电信业务的正常运行要求全网设备之间的频率或时间差异保持在合理的误差水平内，">
+<meta property="og:type" content="article">
+<meta property="og:title" content="NTP与PTP：全网时钟同步协议">
+<meta property="og:url" content="https://blog.huangjunqin.com/2017/07/15/NTP-and-PTP/index.html">
+<meta property="og:site_name" content="黄俊钦">
+<meta property="og:description" content="这周看到了SIGCOMM2016上的一篇论文Globally Synchronized Time via Datacenter Networks，文中提出了一个新型的DTP时钟同步机制，提高全网时钟同步的精确度。本文主要介绍下在abstract中提到了NTP和PTP两种现行的时钟同步协议。 同步的概念在现代通信网络中，大多数电信业务的正常运行要求全网设备之间的频率或时间差异保持在合理的误差水平内，">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://cdn.huangjunqin.com/20130807170330359.jpg">
+<meta property="og:image" content="http://cdn.huangjunqin.com/%E7%BB%98%E5%9B%BE1.png">
+<meta property="og:image" content="http://cdn.huangjunqin.com/cfile1.uf.202734384EDC9F9B11336C.jpg">
+<meta property="article:published_time" content="2017-07-15T12:46:25.000Z">
+<meta property="article:modified_time" content="2021-03-04T06:45:42.900Z">
+<meta property="article:author" content="Junqin Huang">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://cdn.huangjunqin.com/20130807170330359.jpg">
+  
+    <link rel="alternate" href="/atom.xml" title="黄俊钦" type="application/atom+xml">
+  
+  
+    <link rel="shortcut icon" href="/favicon.png">
+  
+  
+    
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/typeface-source-code-pro@0.0.71/index.min.css">
+
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+
+  
+<meta name="generator" content="Hexo 5.4.0"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">黄俊钦</a>
+      </h1>
+      
+        <h2 id="subtitle-wrap">
+          <a href="/" id="subtitle">科研，在路上</a>
+        </h2>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS 订阅"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="搜索"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="搜索"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="https://blog.huangjunqin.com"></form>
+      </div>
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main"><article id="post-NTP-and-PTP" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2017/07/15/NTP-and-PTP/" class="article-date">
+  <time class="dt-published" datetime="2017-07-15T12:46:25.000Z" itemprop="datePublished">2017-07-15</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="p-name article-title" itemprop="headline name">
+      NTP与PTP：全网时钟同步协议
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <p>这周看到了SIGCOMM2016上的一篇论文<a target="_blank" rel="noopener" href="http://dl.acm.org/authorize?N19282">Globally Synchronized Time via Datacenter Networks</a>，文中提出了一个新型的DTP时钟同步机制，提高全网时钟同步的精确度。本文主要介绍下在abstract中提到了NTP和PTP两种现行的时钟同步协议。</p>
+<h3 id="同步的概念"><a href="#同步的概念" class="headerlink" title="同步的概念"></a>同步的概念</h3><p>在现代通信网络中，大多数电信业务的正常运行要求全网设备之间的频率或时间差异保持在合理的误差水平内，即网络时钟同步。网络时钟同步包括相位同步和频率同步两个概念。</p>
+<h4 id="相位同步"><a href="#相位同步" class="headerlink" title="相位同步"></a>相位同步</h4><p>相位同步（Phase synchronization），也称为时间同步，是指信号之间的频率和相位都保持一致，即信号之间相位差恒定为零。</p>
+<h4 id="频率同步"><a href="#频率同步" class="headerlink" title="频率同步"></a>频率同步</h4><p>频率同步（Frequency synchronization），是指信号之间的频率或相位上保持某种严格的特定关系，信号在其相对应的有效瞬间以同一速率出现，以维持通信网络中所有的设备以相同的速率运行，即信号之间保持恒定相位差。</p>
+<p><img src="http://cdn.huangjunqin.com/20130807170330359.jpg" alt="相位同步与频率同步"></p>
+<p>为防止概念混淆，下文中时间同步统一表示相位同步，时钟同步表示同时进行相位同步和频率同步。</p>
+<span id="more"></span>
+<h3 id="NTP"><a href="#NTP" class="headerlink" title="NTP"></a>NTP</h3><p>NTP（Network Time Protocol，网络时间协议）是由RFC 1305定义的时间同步协议，用来在分布式时间服务器和客户端之间进行时间同步。NTP基于UDP报文进行传输，使用的UDP端口号为123。</p>
+<p>使用NTP的目的是对网络内所有具有时钟的设备进行时钟同步，使网络内所有设备的时钟保持一致，从而使设备能够提供基于统一时间的多种应用。</p>
+<p>对于运行NTP的本地系统，既可以接收来自其他时钟源的同步，又可以作为时钟源同步其他的时钟，并且可以和其他设备互相同步。</p>
+<h4 id="工作原理"><a href="#工作原理" class="headerlink" title="工作原理"></a>工作原理</h4><p>Device A和Device B通过网络相连，它们都有自己独立的系统时钟，需要通过NTP实现各自系统时钟的自动同步。为便于理解，作如下假设：</p>
+<p>在Device A和Device B的系统时钟同步之前，Device A的时钟设定为10:00:00am，Device B的时钟设定为11:00:00am。</p>
+<p>Device B作为NTP时间服务器，即Device A将使自己的时钟与Device B的时钟同步。</p>
+<p>NTP报文在Device A和Device B之间单向传输所需要的时间为1秒。</p>
+<p><img src="http://cdn.huangjunqin.com/%E7%BB%98%E5%9B%BE1.png" alt="工作原理"></p>
+<p>系统时钟同步的工作过程如下：</p>
+<ol>
+<li>Device A发送一个NTP报文给Device B，该报文带有它离开Device A时的时间戳，该时间戳为10:00:00am（T1）。</li>
+<li>当此NTP报文到达Device B时，Device B加上自己的时间戳，该时间戳为11:00:01am（T2）。</li>
+<li>当此NTP报文离开Device B时，Device B再加上自己的时间戳，该时间戳为11:00:02am（T3）。</li>
+<li>当Device A接收到该响应报文时，Device A的本地时间为10:00:03am（T4）。</li>
+</ol>
+<p>至此，Device A已经拥有足够的信息来计算两个重要的参数：</p>
+<p>NTP报文的往返时延<code>Delay=（T4-T1）-（T3-T2）=2秒</code>。</p>
+<p>Device A相对Device B的时间差<code>offset=（（T2-T1）+（T3-T4））/2=1小时</code>。</p>
+<p>这样，Device A就能够根据这些信息来设定自己的时钟，使之与Device B的时钟同步。</p>
+<h3 id="PTP"><a href="#PTP" class="headerlink" title="PTP"></a>PTP</h3><p>IEEE 1588PTP协议借鉴了NTP技术，具有容易配置、快速收敛以及对网络带宽和资源消耗少等特点。IEEE1588标准的全称是“网络测量和控制系统的精密时钟同步协议标准（IEEE 1588 Precision Clock Synchronization Protocol）”，简称PTP（Precision Timing Protocol），它的主要原理是通过一个同步信号周期性的对网络中所有节点的时钟进行校正同步，可以使基于以太网的分布式系统达到精确同步，IEEE 1588PTP时钟同步技术也可以应用于任何组播网络中。</p>
+<ul>
+<li><p>PTP域</p>
+<p>应用了PTP协议的网络称为PTP域。网络中可能含有多个PTP域，PTP域是独立PTP时钟同步系统，一个PTP域内有且只有一个时钟源，域内的所有设备都与该时钟源保持同步。</p>
+</li>
+<li><p>时钟节点</p>
+<p>PTP域中的节点称为时钟节点，PTP协议定义了以下三种类型的基本时钟节点：</p>
+<ul>
+<li>普通时钟OC（Ordinary Clock）：同一个PTP域内，只存在单个物理端口参与PTP时间同步。设备通过该端口从上游节点同步时间，或者向下游节点发布时间。</li>
+<li>边界时钟BC（Boundary Clock）：同一个PTP域内，可以存在两个或两个以上物理端口参与PTP时间同步。其中一个端口从上游设备同步时间，其余多个端口向下游设备发布时间。此外，当时钟节点作为时钟源，同时通过多个PTP端口向下游时钟节点发布时间，也称其为BC。</li>
+<li>透明时钟TC（Transparent Clock）：TC与BC、OC最大的不同是BC和OC都要保持本设备与其他设备的时间同步，但TC则不与其他设备保持时间同步。TC有多个PTP端口，它只是在这些PTP端口之间转发PTP报文，对其进行转发时延校正，并不从任何一个端口同步时间。</li>
+</ul>
+</li>
+<li><p>PTP端口</p>
+<p>设备上运行了PTP协议的端口称为PTP端口，PTP端口的按角色可分为以下三种。</p>
+<ul>
+<li>主端口（Master Port）：发布同步时间的端口，可存在于BC或OC上。</li>
+<li>从端口（Slave Port）：接收同步时间的端口，可存在于BC或OC上。</li>
+<li>被动端口（Passive Port）：不接收同步时间，也不对外发布同步时间，闲置备用的端口，只存在于BC上。</li>
+</ul>
+</li>
+<li><p>主从关系</p>
+<p>PTP域的节点设备按照一定的主从关系（Master-Slave）进行时钟同步。主从关系是相对而言的，同步时钟的节点设备称为从节点，发布时钟的节点设备称为主节点，一台设备可能同时从上层节点设备同步时钟，然后向下层节点设备发布时钟。对于相互同步的一对时钟节点来说，存在如下主从关系：</p>
+<ul>
+<li>发布同步时间的节点称为主节点，而接收同步时间的节点则称为从节点。</li>
+<li>主节点上的时钟称为主时钟，而从节点上的时钟则称为从时钟。</li>
+<li>发布同步时间的端口称为主端口，而接收同步时间的端口则称为从端口。</li>
+</ul>
+</li>
+<li><p>最优时钟</p>
+<p>PTP域中所有的时钟节点都按一定层次组织在一起，整个域的参考时钟就是最优时钟GMC（Grandmaster Clock），即最高层次的时钟。通过各时钟节点间PTP报文的交互，最优时钟的时间最终将被同步到整个PTP域中，因此也称其为时钟源。最优时钟可以通过手工配置静态指定，也可以通过最佳主时钟BMC（Best Master Clock）算法动态选举。</p>
+</li>
+</ul>
+<p><img src="http://cdn.huangjunqin.com/cfile1.uf.202734384EDC9F9B11336C.jpg" alt="主从时钟关系图"></p>
+<ul>
+<li><p>PTP报文</p>
+<p>PTP通过主从节点间交互报文，实现主从关系的建立、时间和频率同步。根据报文是否携带时间戳，可以将PTP报文分为两类，事件报文和通用报文。</p>
+<ul>
+<li>事件报文：时间概念报文，进出设备端口时打上精确的时间戳，PTP根据事件报文携带的时间戳，计算链路延迟。事件报文包含以下4种：Sync、Delay_Req、Pdelay_Req和Pdelay_Resp。</li>
+<li>通用报文：非时间概念报文，进出设备不会产生时间戳，用于主从关系的建立、时间信息的请求和通告。通用报文包含以下6种：Announce、 Follow_Up、Delay_Resp、Pdelay_Resp_Follow_Up、Management和Signaling，目前设备不支持 Management、Signaling报文。</li>
+</ul>
+</li>
+<li><p>时钟同步步骤</p>
+<p>时钟同步的实现主要包括3个步骤：</p>
+<ol>
+<li>建立主从关系，选取最优时钟、协商端口主从状态等。</li>
+<li>频率同步，实现从节点频率与主节点同步。</li>
+<li>时间同步，实现从节点时间与主节点同步。</li>
+</ol>
+</li>
+</ul>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://blog.huangjunqin.com/2017/07/15/NTP-and-PTP/" data-id="cklulry40000474vj9hnfez4p" data-title="NTP与PTP：全网时钟同步协议" class="article-share-link">分享</a>
+      
+      
+      
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2017/07/21/Congestion-Control-Algorithms/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">前一篇</strong>
+      <div class="article-nav-title">
+        
+          Introduction of Congestion Control Algorithms
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2017/06/17/Semaphore/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">后一篇</strong>
+      <div class="article-nav-title">信号量解决进程的同步与互斥例题集合</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+
+  
+    
+
+  
+    
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">归档</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/03/">三月 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/01/">一月 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/10/">十月 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/08/">八月 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/07/">七月 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/04/">四月 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/03/">三月 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">十二月 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/11/">十一月 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">十月 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/08/">八月 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/07/">七月 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/06/">六月 2017</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">最新文章</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2021/03/04/%E5%8C%BA%E5%9D%97%E9%93%BE%E5%85%B1%E8%AF%86%E6%9C%BA%E5%88%B6%E7%BB%BC%E8%BF%B0/">区块链共识机制综述</a>
+          </li>
+        
+          <li>
+            <a href="/2019/01/01/2018review/">我的2018</a>
+          </li>
+        
+          <li>
+            <a href="/2018/10/13/information-theory-basis/">『Information and coding theory』熵、相对熵、互信息都是些啥子哟，了解一哈</a>
+          </li>
+        
+          <li>
+            <a href="/2018/10/10/iot-and-iota/">转载 | 物联网与『高效的』IOTA</a>
+          </li>
+        
+          <li>
+            <a href="/2018/08/16/hoticn-forum/">【IEEE HotICN 2018】记录论坛及会议的key points</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      
+      &copy; 2021 Junqin Huang<br>
+      Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+
+<script src="/js/jquery-3.4.1.min.js"></script>
+
+
+
+  
+<script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+
+
+  </div>
+</body>
+</html>
